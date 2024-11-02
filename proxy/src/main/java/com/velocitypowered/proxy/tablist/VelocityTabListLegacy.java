@@ -84,19 +84,19 @@ public class VelocityTabListLegacy extends KeyedVelocityTabList {
   }
 
   @Override
-  public void processLegacyUpdate(LegacyPlayerListItemPacket packet) {
+  public Optional<LegacyPlayerListItemPacket> processLegacyUpdate(LegacyPlayerListItemPacket packet) {
     ServerUpdateTabListEvent.Action action = mapToEventAction(packet.getAction());
     Preconditions.checkNotNull(action, "action");
 
     UpdateEventTabListEntry entry = mapToEventEntry(packet.getAction(), packet.getItems().get(0)); // Only one item per packet in 1.7
 
-    proxyServer.getEventManager().fire(
+    return proxyServer.getEventManager().fire(
         new ServerUpdateTabListEvent(
             player,
             Set.of(action),
             Collections.singletonList(entry)
         )
-    ).thenAccept(event -> {
+    ).thenApply(event -> {
       if (event.getResult().isAllowed()) {
         if (event.getResult().getIds().isEmpty()) {
           if (entry.isRewrite()) {
@@ -114,7 +114,7 @@ public class VelocityTabListLegacy extends KeyedVelocityTabList {
             //listeners haven't modified the entry
             processLegacy(packet.getAction(), packet.getItems().get(0));
 
-            connection.write(packet);
+            return Optional.of(packet);
           }
         } else {
           //listeners have denied entries (and may have modified others), requires manual processing
@@ -134,6 +134,7 @@ public class VelocityTabListLegacy extends KeyedVelocityTabList {
           }
         }
       }
+      return Optional.<LegacyPlayerListItemPacket>empty();
     }).join();
   }
 

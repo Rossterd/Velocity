@@ -175,19 +175,19 @@ public class KeyedVelocityTabList implements InternalTabList {
   }
 
   @Override
-  public void processLegacyUpdate(LegacyPlayerListItemPacket packet) {
+  public Optional<LegacyPlayerListItemPacket> processLegacyUpdate(LegacyPlayerListItemPacket packet) {
     ServerUpdateTabListEvent.Action action = mapToEventAction(packet.getAction());
     Preconditions.checkNotNull(action, "action");
 
     List<UpdateEventTabListEntry> entries = mapToEventEntries(packet.getAction(), packet.getItems());
 
-    proxyServer.getEventManager().fire(
+    return proxyServer.getEventManager().fire(
         new ServerUpdateTabListEvent(
             player,
             Set.of(action),
             Collections.unmodifiableList(entries)
         )
-    ).thenAccept(event -> {
+    ).thenApply(event -> {
       if (event.getResult().isAllowed()) {
         if (event.getResult().getIds().isEmpty()) {
           boolean rewrite = false;
@@ -219,7 +219,7 @@ public class KeyedVelocityTabList implements InternalTabList {
               processLegacy(packet.getAction(), item);
             }
 
-            connection.write(packet);
+            return Optional.of(packet);
           }
         } else {
           //listeners have denied entries (and may have modified others), requires manual processing
@@ -242,6 +242,7 @@ public class KeyedVelocityTabList implements InternalTabList {
           }
         }
       }
+      return Optional.<LegacyPlayerListItemPacket>empty();
     }).join();
   }
 

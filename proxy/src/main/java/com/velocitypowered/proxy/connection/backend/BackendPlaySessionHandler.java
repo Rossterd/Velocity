@@ -334,13 +334,17 @@ public class BackendPlaySessionHandler implements MinecraftSessionHandler {
 
   @Override
   public boolean handle(LegacyPlayerListItemPacket packet) {
-    serverConn.getPlayer().getTabList().processLegacyUpdate(packet);
+    var returnPacket = serverConn.getPlayer().getTabList().processLegacyUpdate(packet);
+    returnPacket.ifPresent(playerConnection::write);
+
     return true;
   }
 
   @Override
   public boolean handle(UpsertPlayerInfoPacket packet) {
-    serverConn.getPlayer().getTabList().processUpdate(packet);
+    var returnPacket = serverConn.getPlayer().getTabList().processUpdate(packet);
+    returnPacket.ifPresent(playerConnection::write);
+
     return true;
   }
 
