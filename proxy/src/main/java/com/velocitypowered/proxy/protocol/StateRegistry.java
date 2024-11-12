@@ -88,10 +88,12 @@ import com.velocitypowered.proxy.protocol.packet.TransferPacket;
 import com.velocitypowered.proxy.protocol.packet.UpsertPlayerInfoPacket;
 import com.velocitypowered.proxy.protocol.packet.chat.ChatAcknowledgementPacket;
 import com.velocitypowered.proxy.protocol.packet.chat.PlayerChatCompletionPacket;
+import com.velocitypowered.proxy.protocol.packet.chat.PlayerChatMessagePacket;
 import com.velocitypowered.proxy.protocol.packet.chat.SystemChatPacket;
 import com.velocitypowered.proxy.protocol.packet.chat.keyed.KeyedPlayerChatPacket;
 import com.velocitypowered.proxy.protocol.packet.chat.keyed.KeyedPlayerCommandPacket;
 import com.velocitypowered.proxy.protocol.packet.chat.legacy.LegacyChatPacket;
+import com.velocitypowered.proxy.protocol.packet.chat.session.PlayerSessionPacket;
 import com.velocitypowered.proxy.protocol.packet.chat.session.SessionPlayerChatPacket;
 import com.velocitypowered.proxy.protocol.packet.chat.session.SessionPlayerCommandPacket;
 import com.velocitypowered.proxy.protocol.packet.chat.session.UnsignedPlayerCommandPacket;
@@ -281,6 +283,13 @@ public enum StateRegistry {
       serverbound.register(UnsignedPlayerCommandPacket.class, UnsignedPlayerCommandPacket::new,
           map(0x04, MINECRAFT_1_20_5, false),
           map(0x05, MINECRAFT_1_21_2, false));
+      serverbound.register(
+          PlayerSessionPacket.class,
+          PlayerSessionPacket::new,
+          map(0x20, MINECRAFT_1_19_3, false),
+          map(0x06, MINECRAFT_1_19_4, false),
+          map(0x07, MINECRAFT_1_20_5, false),
+          map(0x08, MINECRAFT_1_21_2, false)); // TODO: verify this. its a guess :')
       serverbound.register(
           SessionPlayerChatPacket.class,
           SessionPlayerChatPacket::new,
@@ -616,6 +625,10 @@ public enum StateRegistry {
           map(0x0C, MINECRAFT_1_19_3, true),
           map(0x0E, MINECRAFT_1_19_4, true),
           map(0x0F, MINECRAFT_1_20_2, true));
+      clientbound.register(
+          PlayerChatMessagePacket.class,
+          PlayerChatMessagePacket::new,
+          map(0x39, MINECRAFT_1_21, false));
       clientbound.register(
           LegacyPlayerListItemPacket.class,
           LegacyPlayerListItemPacket::new,

@@ -66,6 +66,7 @@ import com.velocitypowered.proxy.protocol.packet.chat.keyed.KeyedPlayerCommandPa
 import com.velocitypowered.proxy.protocol.packet.chat.legacy.LegacyChatHandler;
 import com.velocitypowered.proxy.protocol.packet.chat.legacy.LegacyChatPacket;
 import com.velocitypowered.proxy.protocol.packet.chat.legacy.LegacyCommandHandler;
+import com.velocitypowered.proxy.protocol.packet.chat.session.PlayerSessionPacket;
 import com.velocitypowered.proxy.protocol.packet.chat.session.SessionChatHandler;
 import com.velocitypowered.proxy.protocol.packet.chat.session.SessionCommandHandler;
 import com.velocitypowered.proxy.protocol.packet.chat.session.SessionPlayerChatPacket;
@@ -278,6 +279,12 @@ public class ClientPlaySessionHandler implements MinecraftSessionHandler {
       this.chatHandler.handlePlayerChat(packet);
     }
     return true;
+  }
+
+  @Override
+  public boolean handle(PlayerSessionPacket packet) {
+    logger.info("Handling playersessionpacket");
+    return this.chatHandler.handlePlayerSession(packet);
   }
 
   @Override

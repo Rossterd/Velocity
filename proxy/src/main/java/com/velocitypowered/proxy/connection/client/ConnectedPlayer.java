@@ -83,6 +83,7 @@ import com.velocitypowered.proxy.protocol.packet.chat.ChatQueue;
 import com.velocitypowered.proxy.protocol.packet.chat.ChatType;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.chat.PlayerChatCompletionPacket;
+import com.velocitypowered.proxy.protocol.packet.chat.RemoteChatSession;
 import com.velocitypowered.proxy.protocol.packet.chat.builder.ChatBuilderFactory;
 import com.velocitypowered.proxy.protocol.packet.chat.builder.ChatBuilderV2;
 import com.velocitypowered.proxy.protocol.packet.chat.legacy.LegacyChatPacket;
@@ -190,6 +191,7 @@ public class ConnectedPlayer implements MinecraftConnectionAssociation, Player, 
   private @Nullable ClientSettingsPacket clientSettingsPacket;
   private final ChatQueue chatQueue;
   private final ChatBuilderFactory chatBuilderFactory;
+  private @Nullable RemoteChatSession remoteChatSession;
 
   ConnectedPlayer(VelocityServer server, GameProfile profile, MinecraftConnection connection,
                   @Nullable InetSocketAddress virtualHost, @Nullable String rawVirtualHost, boolean onlineMode,
@@ -1450,5 +1452,13 @@ public class ConnectedPlayer implements MinecraftConnectionAssociation, Player, 
     public void fireAndForget() {
       connectWithIndication();
     }
+  }
+
+  public void setRemoteChatSession(@Nullable RemoteChatSession remoteChatSession) {
+    this.remoteChatSession = remoteChatSession;
+  }
+
+  public @Nullable RemoteChatSession getRemoteChatSession() {
+    return remoteChatSession;
   }
 }

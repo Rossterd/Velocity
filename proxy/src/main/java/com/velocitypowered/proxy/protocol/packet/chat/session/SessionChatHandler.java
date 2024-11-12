@@ -17,6 +17,11 @@
 
 package com.velocitypowered.proxy.protocol.packet.chat.session;
 
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
+import com.velocitypowered.api.proxy.crypto.IdentifiedKey;
+import com.velocitypowered.proxy.crypto.IdentifiedKeyImpl;
+import com.velocitypowered.proxy.crypto.MojangPublicKeys;
 import static com.velocitypowered.proxy.protocol.packet.chat.keyed.KeyedChatHandler.invalidCancel;
 import static com.velocitypowered.proxy.protocol.packet.chat.keyed.KeyedChatHandler.invalidChange;
 
@@ -26,6 +31,14 @@ import com.velocitypowered.proxy.VelocityServer;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.protocol.packet.chat.ChatHandler;
 import com.velocitypowered.proxy.protocol.packet.chat.ChatQueue;
+import com.velocitypowered.proxy.protocol.packet.chat.RemoteChatSession;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.security.SignatureException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -86,5 +99,51 @@ public class SessionChatHandler implements ChatHandler<SessionPlayerChatPacket> 
         packet.getTimestamp(),
         packet.getLastSeenMessages()
     );
+  }
+
+  @Override
+  public boolean handlePlayerSession(PlayerSessionPacket packet) {
+//    try {
+//      // Line up the bytes to verify.
+//      byte[] bytes = new byte[24 + packet.publicKey.length];
+//      ByteBuffer.wrap(bytes)
+//              .order(ByteOrder.BIG_ENDIAN)
+//              .putLong(player.getUniqueId().getMostSignificantBits())
+//              .putLong(player.getUniqueId().getLeastSignificantBits())
+//              .putLong(packet.expiresAt)
+//              .put(packet.publicKey);
+//
+//
+//      // Verify bytes with signature.
+//      Signature sign = Signature.getInstance("SHA1withRSA");
+//      var mojangPublicKeys = server.getMojangPublicKeys().getPlayerCertificateKeys();
+//
+//      boolean verified = false;
+//      for (PublicKey mojangPublicKey : mojangPublicKeys) {
+//        sign.initVerify(mojangPublicKey);
+//        sign.update(bytes);
+//        if (sign.verify(packet.keySignature)) {
+//          verified = true;
+//        }
+//      }
+//
+//      // Enforce verification of chat session info
+//      if (!verified) {
+//        // TODO: enforce chat signing? Kick em?
+//        logger.warn("Player {} tried to initialize player session with unsigned details.", player.getUsername());
+//      }
+//
+//      // Set player chat session.
+//      var key = new IdentifiedKeyImpl(IdentifiedKey.Revision.LINKED_V2, packet.publicKey, packet.expiresAt, packet.keySignature);
+//      player.setRemoteChatSession(new RemoteChatSession(packet.sessionId, key));
+//
+//
+//    } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
+//      // TODO: do something here?
+//      throw new RuntimeException(e);
+//    }
+
+    // Say we handled this packet, so the backend server does not receive it.
+    return false;
   }
 }

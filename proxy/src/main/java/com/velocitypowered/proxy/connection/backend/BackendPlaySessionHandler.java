@@ -66,6 +66,7 @@ import com.velocitypowered.proxy.protocol.packet.TabCompleteResponsePacket;
 import com.velocitypowered.proxy.protocol.packet.TransferPacket;
 import com.velocitypowered.proxy.protocol.packet.UpsertPlayerInfoPacket;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
+import com.velocitypowered.proxy.protocol.packet.chat.PlayerChatMessagePacket;
 import com.velocitypowered.proxy.protocol.packet.config.StartUpdatePacket;
 import com.velocitypowered.proxy.protocol.util.PluginMessageUtil;
 import io.netty.buffer.ByteBuf;
@@ -341,8 +342,37 @@ public class BackendPlaySessionHandler implements MinecraftSessionHandler {
   @Override
   public boolean handle(UpsertPlayerInfoPacket packet) {
     serverConn.getPlayer().getTabList().processUpdate(packet);
+
+
+    // Because we intercept the PlayerSession packet, the backend servers should be sending INITIALIZE_CHAT updates
+    // without key info. We want now add that key info back in.
+//    if(packet.getActions().contains(UpsertPlayerInfoPacket.Action.INITIALIZE_CHAT)) {
+//      for(var entry : packet.getEntries()) {
+//        var uuid = entry.getProfileId();
+//        if (server.getPlayer(uuid).isPresent()) {
+//          var player = server.getPlayer(uuid).get();
+//          var remoteChatSession = ((ConnectedPlayer) player).getRemoteChatSession();
+//
+//          entry.setChatSession(remoteChatSession);
+//        } else {
+//          // TODO: do or say something useful
+//          logger.error("dont think this should be happening?");
+//        }
+//      }
+//    }
+
     return false;
   }
+
+  @Override
+  public boolean handle(PlayerChatMessagePacket packet) {
+    logger.info("we were here guys. thats so crazy to me.");
+
+    playerConnection.write(packet);
+
+    return true;
+  }
+
 
   @Override
   public boolean handle(RemovePlayerInfoPacket packet) {

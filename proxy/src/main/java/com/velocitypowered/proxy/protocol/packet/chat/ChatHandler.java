@@ -18,6 +18,7 @@
 package com.velocitypowered.proxy.protocol.packet.chat;
 
 import com.velocitypowered.proxy.protocol.MinecraftPacket;
+import com.velocitypowered.proxy.protocol.packet.chat.session.PlayerSessionPacket;
 
 public interface ChatHandler<T extends MinecraftPacket> {
 
@@ -30,6 +31,10 @@ public interface ChatHandler<T extends MinecraftPacket> {
       handlePlayerChatInternal(packetClass().cast(packet));
       return true;
     }
+    return false;
+  }
+
+  default boolean handlePlayerSession(PlayerSessionPacket packet) {
     return false;
   }
 }

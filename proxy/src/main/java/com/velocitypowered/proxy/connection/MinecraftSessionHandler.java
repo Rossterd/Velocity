@@ -58,10 +58,12 @@ import com.velocitypowered.proxy.protocol.packet.TransferPacket;
 import com.velocitypowered.proxy.protocol.packet.UpsertPlayerInfoPacket;
 import com.velocitypowered.proxy.protocol.packet.chat.ChatAcknowledgementPacket;
 import com.velocitypowered.proxy.protocol.packet.chat.PlayerChatCompletionPacket;
+import com.velocitypowered.proxy.protocol.packet.chat.PlayerChatMessagePacket;
 import com.velocitypowered.proxy.protocol.packet.chat.SystemChatPacket;
 import com.velocitypowered.proxy.protocol.packet.chat.keyed.KeyedPlayerChatPacket;
 import com.velocitypowered.proxy.protocol.packet.chat.keyed.KeyedPlayerCommandPacket;
 import com.velocitypowered.proxy.protocol.packet.chat.legacy.LegacyChatPacket;
+import com.velocitypowered.proxy.protocol.packet.chat.session.PlayerSessionPacket;
 import com.velocitypowered.proxy.protocol.packet.chat.session.SessionPlayerChatPacket;
 import com.velocitypowered.proxy.protocol.packet.chat.session.SessionPlayerCommandPacket;
 import com.velocitypowered.proxy.protocol.packet.config.ActiveFeaturesPacket;
@@ -362,6 +364,14 @@ public interface MinecraftSessionHandler {
   }
 
   default boolean handle(ClientboundServerLinksPacket packet) {
+    return false;
+  }
+
+  default boolean handle(PlayerSessionPacket packet) {
+    return false;
+  }
+
+  default boolean handle(PlayerChatMessagePacket packet) {
     return false;
   }
 }

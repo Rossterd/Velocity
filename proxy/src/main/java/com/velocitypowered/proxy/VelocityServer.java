@@ -51,6 +51,7 @@ import com.velocitypowered.proxy.connection.player.resourcepack.VelocityResource
 import com.velocitypowered.proxy.connection.util.ServerListPingHandler;
 import com.velocitypowered.proxy.console.VelocityConsole;
 import com.velocitypowered.proxy.crypto.EncryptionUtils;
+import com.velocitypowered.proxy.crypto.MojangPublicKeys;
 import com.velocitypowered.proxy.event.VelocityEventManager;
 import com.velocitypowered.proxy.network.ConnectionManager;
 import com.velocitypowered.proxy.plugin.VelocityPluginManager;
@@ -76,13 +77,20 @@ import io.netty.channel.EventLoopGroup;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
+import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -168,6 +176,8 @@ public class VelocityServer implements ProxyServer, ForwardingAudience {
   private final VelocityChannelRegistrar channelRegistrar = new VelocityChannelRegistrar();
   private final ServerListPingHandler serverListPingHandler;
 
+  private MojangPublicKeys mojangPublicKeys;
+
   VelocityServer(final ProxyOptions options) {
     pluginManager = new VelocityPluginManager(this);
     eventManager = new VelocityEventManager(pluginManager);
@@ -178,6 +188,7 @@ public class VelocityServer implements ProxyServer, ForwardingAudience {
     servers = new ServerMap(this);
     serverListPingHandler = new ServerListPingHandler(this);
     this.options = options;
+    this.mojangPublicKeys = new MojangPublicKeys(this.getVersion());
   }
 
   public KeyPair getServerKeyPair() {
@@ -832,5 +843,9 @@ public class VelocityServer implements ProxyServer, ForwardingAudience {
   @Override
   public ResourcePackInfo.Builder createResourcePackBuilder(String url) {
     return new VelocityResourcePackInfo.BuilderImpl(url);
+  }
+
+  public MojangPublicKeys getMojangPublicKeys() {
+    return mojangPublicKeys;
   }
 }
